@@ -1,5 +1,6 @@
 import pymysql
 from bs4 import BeautifulSoup
+import sys
 
 def connect():
     connection = pymysql.connect(host='localhost', user='nina',
@@ -17,9 +18,7 @@ def get_sitename(site):
     site_name = ""    
     soup = BeautifulSoup(site, 'html.parser')
     site_name = soup.title.string
-    #print("Site_name: " + site_name)
     site_name = site_name.split(" ")[0]
-    #print("Sitename: " + site_name + ".")
     return site_name
     
 def gettopic(site):
@@ -31,6 +30,7 @@ def gettopic(site):
         for a in row.findAll('a'):            
             t += a.get_text()
             t += " / "
+        t = t.replace("\'", "\\\'")
         topic.append(t)
 
     if "" in topic and len(topic) == 1:
@@ -51,16 +51,19 @@ def addtopic(site, domains):
         for topic in topics:
             topicquery = "SELECT id FROM categorystrings \
                           WHERE categories like \'%s\'" %topic
+
+            id = ""
             try:
                 cur.execute(topicquery)
+                id = cur.fetchone()
             except:
                 print("topicquery: " + topicquery)
-                print("ERROR: " + sys.exc_info()[0])
+                print("ERROR: ", sys.exc_info()[0])
 
                       
             # If topic already in database, add info about site to database
             # If not, first add topic to database
-            id = cur.fetchone()
+            
             if not id:
                 topicinsert = "INSERT INTO categorystrings (categories) \
                                values(\'%s\')" %topic
@@ -68,17 +71,18 @@ def addtopic(site, domains):
                       cur2.execute(topicinsert)
                 except:
                       print("topicinsert: " + topicinsert)
-                      print("ERROR: " + sys.exc_info()[0])
+                      print("ERROR: ", sys.exc_info()[0])
 
                 topicquery = "SELECT id FROM categorystrings \
                               WHERE categories like \'%s\'" %topic
                 try:
                     cur.execute(topicquery)
+                    id = cur.fetchone()
                 except:
                     print("topicquery: " + topicquery)
-                    print("ERROR: " + sys.exc_info()[0])
+                    print("ERROR: ", sys.exc_info()[0])
                 
-                id = cur.fetchone()
+                
                 
             insertsite = "INSERT INTO sites (name, categorystring) \
                           VALUES(\'%s\',\'%s\')" %(sitename, id[0])
@@ -87,7 +91,7 @@ def addtopic(site, domains):
                 cur2.execute(insertsite)
             except:
                 print("insertsite: " + insertsite)
-                print("ERROR: " + sys.exc_info()[0])
+                print("ERROR: ", sys.exc_info()[0])
         
 
     closeconnection(cur)
