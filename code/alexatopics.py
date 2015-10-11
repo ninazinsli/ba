@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 def connect():
     connection = pymysql.connect(host='localhost', user='nina',
                                  password='nina_secure', db='urltracker',
+                                 charset='utf8', use_unicode=True,
                                  autocommit = True   )
     return connection.cursor()
 
@@ -35,7 +36,7 @@ def gettopic(site):
     if "" in topic and len(topic) == 1:
         topic.append("no category")
         topic.remove("")
-    print("Topic: " + str(topic))
+    #print("Topic: " + str(topic))
     return topic
     
     
@@ -50,22 +51,45 @@ def addtopic(site, domains):
         for topic in topics:
             topicquery = "SELECT id FROM categorystrings \
                           WHERE categories like \'%s\'" %topic
-            cur.execute(topicquery)
+            try:
+                cur.execute(topicquery)
+            except:
+                print("topicquery: " + topicquery)
+                print("ERROR: " + sys.exc_info()[0])
+
+                      
             # If topic already in database, add info about site to database
             # If not, first add topic to database
-            if not cur.fetchone():
+            id = cur.fetchone()
+            if not id:
                 topicinsert = "INSERT INTO categorystrings (categories) \
                                values(\'%s\')" %topic
-                cur2.execute(topicinsert)
+                try:
+                      cur2.execute(topicinsert)
+                except:
+                      print("topicinsert: " + topicinsert)
+                      print("ERROR: " + sys.exc_info()[0])
+
                 topicquery = "SELECT id FROM categorystrings \
                               WHERE categories like \'%s\'" %topic
-                cur.execute(topicquery)
-            id = cur.fetchone()[0]
+                try:
+                    cur.execute(topicquery)
+                except:
+                    print("topicquery: " + topicquery)
+                    print("ERROR: " + sys.exc_info()[0])
+                
+                id = cur.fetchone()
+                
             insertsite = "INSERT INTO sites (name, categorystring) \
-                          VALUES(\'%s\',\'%s\')" %(sitename, id)
-            cur2.execute(insertsite)
+                          VALUES(\'%s\',\'%s\')" %(sitename, id[0])
+
+            try:
+                cur2.execute(insertsite)
+            except:
+                print("insertsite: " + insertsite)
+                print("ERROR: " + sys.exc_info()[0])
         
-        
+
     closeconnection(cur)
     closeconnection(cur2)
 
@@ -77,13 +101,14 @@ def main():
     # get all domains and safe them alphabetically ordered in a list
     sql_domain = "SELECT distinct(domain) FROM events \
                   WHERE domain is not null"
+#                  LIMIT 10"
     
     cur.execute(sql_domain)
-    #domains = list(cur.fetchall())[6:] # first 6 elements are not usable
-    domains = set(cur.fetchall())
+    domains = set([])
+    for d in cur.fetchall():
+        domains.add(d[0])
     #print(domains)
-    print("Domains geholt: " + len(domains))
-    #domains.add("007james.com")
+    print("Domains geholt: " + str(len(domains)))
 
     # Read alexa file info (one site at a time)
     alexafile = open("../../alexa/alexa-site-info")
