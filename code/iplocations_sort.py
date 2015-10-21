@@ -22,7 +22,7 @@ def iptoint(addr):
         ip = 0
     return ip
 
-def intoip(addr):                                                             
+def inttoip(addr):                                                             
     try:
         ip = socket.inet_ntoa(struct.pack("!I", addr))
     except:
@@ -40,18 +40,37 @@ def main():
     print("ip selected")
     print("we found ", cur.rowcount, " ips")
     
+    iplist = []
     for res in cur.fetchall():
         ip = res[0]
         ipint = iptoint(ip)
-        
-        sqllocid = "SELECT locid FROM geolite_blocks \
-               WHERE \'%s\' >= from_ip AND \'%s\' <= to_ip" %(ipint, ipint)
-        cur2.execute(sqllocid)
-        for row in cur2.fetchall():
-            locid = row[0]
-            sql = "INSERT INTO iplocdistinct (ip, locid, geoname_id) \
-                   VALUES(\'%s\', \'%s\', \'0\')"  % (ip, locid)
+        iplist.append(ipint)
+
+    iplist.sort()
+    no = len(iplist)
+    print("sorted")
+    
+    sqlranges = "SELECT * from geolite_blocks order by from_ip asc"
+    cur2.execute(sqlranges)
+    print("ranges selected")
+    
+    i = 0
+    ip = iplist[i]
+    for row in cur2.fetchall():
+        from_ip = row[0]
+        to_ip = row[1]
+        locid = row[2]
+        while ip < from_ip and i < no -1:
+            i += 1
+            ip = iplist[i]
+        while ip >= from_ip and ip <= to_ip and i < no - 1:
+            sql = "INSERT INTO iploc (ip, locid, geoname_id) \
+                   VALUES(\'%s\', \'%s\', \'0\')"  % (inttoip(ip), locid)
             cur3.execute(sql)
+            i += 1
+            ip = iplist[i]
+        
+        
             
     closeconnection(cur)
     closeconnection(cur2)
