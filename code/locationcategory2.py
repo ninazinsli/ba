@@ -18,7 +18,7 @@ def main():
     cur2 = connect()
     cur3 = connect()
 
-    sqlloc = "SELECT ip, locid FROM iplocdistinct  \
+    sqlloc = "SELECT ip, locid FROM iploc  \
               WHERE locid <> 44 limit 50"
     cur.execute(sqlloc)
     print(cur.rowcount, "locations and ip selected")
@@ -29,11 +29,11 @@ def main():
         ip = res[0]
         locid = res[1]
         sqlcat = "SELECT s.categorystring \
-                  FROM (SELECT domain FROM events \
-                        WHERE domain is not null AND ip = '%s') e \
+                  FROM (SELECT md5domain FROM events_md5 \
+                        WHERE ip = '%s') e \
                   INNER JOIN \
                   sites s \
-                  ON (e.domain = s.name COLLATE utf8_unicode_ci)" %ip
+                  ON (e.md5domain = s.md5name COLLATE utf8_unicode_ci)" %ip
         print(sqlcat)
         cur2.execute(sqlcat)
         print("Executed query")
