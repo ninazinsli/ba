@@ -30,10 +30,9 @@ def main():
         locid = res[1]
         sqlcat = "SELECT s.categorystring \
                   FROM (SELECT md5domain FROM events_md5 \
-                        WHERE ip = '%s') e \
-                  INNER JOIN \
-                  sites s \
-                  ON (e.md5domain = s.md5name COLLATE utf8_unicode_ci)" %ip
+                        WHERE ip = '%s') as e, \
+                  sites  as s \
+                  WHERE e.md5domain = s.md5name COLLATE utf8_unicode_ci" %ip
         print(sqlcat)
         cur2.execute(sqlcat)
         print("Executed query")

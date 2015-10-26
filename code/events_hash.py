@@ -21,7 +21,9 @@ def main():
               WHERE domain is not null and ip is not null"
     cur.execute(sqlloc)
     print(cur.rowcount, "domains and ip selected")
-
+    
+    done = cur.fetchmany(size = 15863401)
+    print(cur.rowcount, "domains and ip remaining")
     for res in cur.fetchall():
         ip = res[1]
         domain = res[0]
