@@ -19,13 +19,13 @@ def main():
     cur3 = connect()
 
     sqlloc = "SELECT ip, locid FROM iploc  \
-              WHERE locid <> 44 limit 50"
+              WHERE locid <> 44"
     cur.execute(sqlloc)
     print(cur.rowcount, "locations and ip selected")
 
     dict = {}
     for res in cur.fetchall():
-        print("start res")
+        #print("start res")
         ip = res[0]
         locid = res[1]
         sqlcat = "SELECT s.categorystring \
@@ -33,9 +33,9 @@ def main():
                         WHERE ip = '%s') as e, \
                   sites  as s \
                   WHERE e.md5domain = s.md5name COLLATE utf8_unicode_ci" %ip
-        print(sqlcat)
+        #print(sqlcat)
         cur2.execute(sqlcat)
-        print("Executed query")
+        #print("Executed query")
         for s in cur2.fetchall():
             cat = s[0]
             if cat:

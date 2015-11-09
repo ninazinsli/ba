@@ -65,13 +65,13 @@ def list_events():
 
 def main():
     #iploc = dict_iploc()
-    #pickle.dump(iploc, open("iploc_dict", "wb"))
-    iploc = pickle.load(open("iploc_dict", "rb"))
+    #pickle.dump(iploc, open("../databases/iploc_dict", "wb"))
+    iploc = pickle.load(open("../databases/iploc_dict", "rb"))
     sites = dict_sites()
     events = list_events()
-    pickle.dump(events, open("events_list.txt", "wb"))
+    pickle.dump(events, open("../databases/events_list.txt", "wb"))
     print("Events saved")
-    #events = pickle.load(open("events_list.txt", "rb"))
+    #events = pickle.load(open("../databases/events_list.txt", "rb"))
     #print(eventsl)
 
     # Save events to dict

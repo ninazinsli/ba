@@ -29,12 +29,19 @@ def main():
             locid = row[0]
             city = row[3]
             zip = row[4]
+            lat = row[5]
+            lon = row[6]
 
             if ('\'' in city):
                 city = city.replace('\'', ' ')
+
+            if zip == '':
+                zip = 0
                 
-            sql = "INSERT INTO geolite_locations values(\'%s\', \'%s\', \'%s\')" %(locid, city, zip)
-            #import pdb; pdb.set_trace()
+            sql = "INSERT INTO geolite_loc_coord \
+                   values(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\') \
+                   " %(locid, city, zip, lat, lon)
+
             #print(sql)
             cur.execute(sql)
     
