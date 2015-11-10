@@ -45,12 +45,12 @@ if __name__ == "__main__":
     # Read values from databases
     #loccoord = get_loccoord()
     #pickle.dump(loccoord, open("loccoord_dict", "wb"))
-    loccoord = pickle.load(open("loccoord_dict", "rb"))
+    loccoord = pickle.load(open("../databases/dict[(locid,langs)]count", "rb"))
     print("loco saved")
     
     #clicks = clicksperloc(loccoord)
     #pickle.dump(clicks, open("clicksperloccoord_dict", "wb"))
-    clicks = pickle.load(open("clicksperloccoord_dict", "rb"))
+    clicks = pickle.load(open("../databases/clicksperloccoord_dict", "rb"))
     print("clicks saved")
     
     # Make map

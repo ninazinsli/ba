@@ -21,31 +21,30 @@ def main():
     cur = connect()
     cur2 = connect()
 
-    ziptocode = pickle.load(open("../databases/ziptocode", "rb"))
-    
-    sql_zip = "SELECT distinct(zip) FROM location"
-    cur.execute(sql_zip)
-    print("%s zips selected" %cur.rowcount)
+    #ziptocode = pickle.load(open("../databases/ziptocode", "rb"))
+    namecode = pickle.load(open("../databases/namecode", "rb"))
 
+    codename = defaultdict()
+    for k in namecode.keys():
+        
+        codename[namecode[k][0]] = k
+
+            
+    sql_city = "SELECT city FROM location where code is null limit 20"
+    cur.execute(sql_city)
+    print("%s cities selected" %cur.rowcount)
     
-    more = 0
+
     for row in cur:
-        zip = row[0]
-        if zip in ziptocode:
-            codes = ziptocode[zip]
-            if len(codes) == 1:
-                code = codes[0]
-            else:
-                #print("more than one ", zip)
-                #print(codes)
-                more += 1
+        name = row[0]
+        if name in codename:
+            code = codename[name]
+            sql_update = "UPDATE location SET code = \'%s\' \
+                          WHERE city = \'%s\'" %(code, name)
+            cur2.execute(sql_update)
+        else:
+            print(name)
 
-                sql_update = "UPDATE location SET code = \'%s\' \
-                              WHERE zip = \'%s\'" %(code, zip)
-                #cur2.execute(sql_update)
-
-
-    print("more ", more)
             
     closeconnection(cur)
     closeconnection(cur2)
