@@ -27,10 +27,10 @@ def main():
     #         ziptocode[zip] = [code]
 
     
-    # pickle.dump(ziptocode, open("../databases/ziptocode", "wb"))
-    # pickle.dump(codetozip, open("../databases/codetozip", "wb"))
+    # pickle.dump(ziptocode, open("../databases/dd[zip]codelist", "wb"))
+    # pickle.dump(codetozip, open("../databases/dd[code]ziplist", "wb"))
 
-    ziptocode = pickle.load(open("../databases/ziptocode", "rb"))
+    ziptocode = pickle.load(open("../databases/dd[zip]codelist", "rb"))
     print(len(ziptocode))
 
     counter = 0

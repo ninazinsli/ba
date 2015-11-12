@@ -31,19 +31,19 @@ def main():
     #     else:
     #         namezip[zip] = [name]
 
-    # pickle.dump(namezip, open("../databases/namezip", "wb"))
-    # pickle.dump(namecode, open("../databases/namecode", "wb")
+    # pickle.dump(namezip, open("../databases/dict[zip]citylist", "wb"))
+    # pickle.dump(namecode, open("../databases/dict[code]citylist", "wb")
     
     zc = 0
     cc = 0
-    namezip = pickle.load(open("../databases/namezip", "rb"))
+    namezip = pickle.load(open("../databases/dict[zip]citylist", "rb"))
     print('namezip ', len(namezip))
     for k in namezip.keys():
         if len(namezip[k]) > 1:
             zc += 1
     print("zip count ", zc)
             
-    namecode = pickle.load(open("../databases/namecode", "rb"))
+    namecode = pickle.load(open("../databases/dict[code]citylist", "rb"))
     print(len(namecode))
     for k in namecode.keys():
         if len(namecode[k]) > 1:

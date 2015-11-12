@@ -48,11 +48,11 @@ def list_events():
 
 def main():
     #iploc = dict_iploc()
-    #pickle.dump(iploc, open("iploc_dict", "wb"))
-    iploc = pickle.load(open("iploc_dict", "rb"))
+    #pickle.dump(iploc, open("../databases/dict[ip]locid", "wb"))
+    iploc = pickle.load(open("../databases/dict[ip]locid", "rb"))
     #events = list_events()
-    #pickle.dump(events, open("events_list.txt", "wb"))
-    events = pickle.load(open("events_list.txt", "rb"))
+    #pickle.dump(events, open("../databases/list[ip,domain]", "wb"))
+    events = pickle.load(open("../databases/list[ip,domain]", "rb"))
     print("loading done")
     
     
@@ -67,7 +67,7 @@ def main():
             else:
                 dict[locid] = 1
 
-    pickle.dump(dict, open("clicksperloc.txt", "wb"))
+    pickle.dump(dict, open("../databases/dict[locid]clicks", "wb"))
     print("dict done")
 
     # Write dict to database

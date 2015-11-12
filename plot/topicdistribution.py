@@ -3,6 +3,8 @@ from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+from collections import defaultdict
+
 
 def connect():
     connection = pymysql.connect(host='localhost', user='nina',
@@ -16,47 +18,38 @@ def closeconnection(cur):
     cur.close()
     conn.close()
 
-def get_loccoord():
-    cur = connect()
-    dict = {}
-    sql_loccoord = "SELECT locid, latitude, longitude \
-                    FROM location"
-    cur.execute(sql_loccoord)
-    for row in cur:
-        dict[row[0]] = (row[1], row[2])
-    return dict
+def get_topicdistribution(topics):
+    loccoord = pickle.load(open("../databases/dict[locid]lat,lon", "rb"))
+    clicks = defaultdict(int)
+    for t in topics.keys():
+        if t in loccoord:
+            if topic in list(zip(*topics[t]))[0]:
+                clicks[loccoord[t]] += 1
 
-def clicksperloc(loco):
-    dict = {}
-    cur = connect()
-    sql_cpl = "SELECT locid, count FROM clicksperloc"
-    cur.execute(sql_cpl)
-    for row in cur:
-        locid = row[0]
-        count = row[1]
-        if locid != 44 and locid in loco:
-            lat = loco[locid][0]
-            lon = loco[locid][1]
-            if lat != 0:
-                dict[(lat,lon)] = count
-    return dict
+    print("total number of locations with topic: ", len(clicks))
+    return clicks
+
     
 if __name__ == "__main__":
-    # Read values from databases
-    #loccoord = get_loccoord()
-    #pickle.dump(loccoord, open("../databases/dict[locid]lat,lon", "wb"))
-    loccoord = pickle.load(open("../databases/dict[locid]lat,lon", "rb"))
-    print("loco saved")
+
+    # Topic whose distribution is plotted
+    topic = 48
     
-    #clicks = clicksperloc(loccoord)
-    #pickle.dump(clicks, open("../databases/dict[lat,lon]clicks", "wb"))
-    clicks = pickle.load(open("../databases/dict[lat,lon]clicks", "rb"))
-    print("clicks saved")
+    # Read values from databases
+    topicsabs = pickle.load(open("../databases/dict[locid]list:(topic,count)",
+                              "rb"))
+    topicsrel = pickle.load(open("../databases/dict[locid]list:(topic,perc)",
+                                 "rb"))
+
+
+    # Get absolute or relative distribution
+    clicks = get_topicdistribution(topicsrel)
+                
     
     # Make map
     width = 400000
     height = 300000
-    res = 'f'
+    res = 'l'
     proj = 'tmerc'
     lon = 8.25
     lat = 46.75
@@ -70,7 +63,7 @@ if __name__ == "__main__":
 
     print("map done")
 
-    min_marker_size = 2*1E-4
+    min_marker_size = 5
     
     for c in clicks:
         x,y = ch_map(c[1], c[0])

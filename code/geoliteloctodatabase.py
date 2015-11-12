@@ -38,7 +38,7 @@ def main():
             if zip == '':
                 zip = 0
                 
-            sql = "INSERT INTO geolite_loc_coord \
+            sql = "INSERT INTO location (locid,city,zip,lat,lon) \
                    values(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\') \
                    " %(locid, city, zip, lat, lon)
 

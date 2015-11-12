@@ -20,7 +20,7 @@ def get_loccoord():
     cur = connect()
     dict = {}
     sql_loccoord = "SELECT locid, latitude, longitude \
-                    FROM geolite_loc_coord"
+                    FROM location"
     cur.execute(sql_loccoord)
     for row in cur:
         dict[row[0]] = (row[1], row[2])
@@ -44,13 +44,13 @@ def clicksperloc(loco):
 if __name__ == "__main__":
     # Read values from databases
     #loccoord = get_loccoord()
-    #pickle.dump(loccoord, open("loccoord_dict", "wb"))
-    loccoord = pickle.load(open("loccoord_dict", "rb"))
+    #pickle.dump(loccoord, open("../databases/dict[locid]lat,lon", "wb"))
+    loccoord = pickle.load(open("../databases/dict[locid]lat,lon", "rb"))
     print("loco saved")
     
     #clicks = clicksperloc(loccoord)
-    #pickle.dump(clicks, open("clicksperloccoord_dict", "wb"))
-    clicks = pickle.load(open("clicksperloccoord_dict", "rb"))
+    #pickle.dump(clicks, open("../databases/dict[lat,lon]clicks", "wb"))
+    clicks = pickle.load(open("../databases/dict[lat,lon]clicks", "rb"))
     print("clicks saved")
     
     # Make map
@@ -78,5 +78,5 @@ if __name__ == "__main__":
         ch_map.plot(x, y, 'ro', markersize=msize)
 
         
-    plt.savefig('clickspercoord.png')
+    #plt.savefig('clickspercoord.png')
     plt.show()

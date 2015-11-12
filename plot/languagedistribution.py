@@ -39,10 +39,12 @@ def get_iplang():
 def get_langloc(iplang):
     dict = {}
     iploc = pickle.load(open("../databases/dict[ip]locid", "rb"))
+    
     for (ip, langs) in iplang:
+        lang = langs[0:2]
         if ip in iploc:
             locid = iploc[ip]
-            dict[(locid, langs)] = iplang[(ip, langs)]
+            dict[(locid, lang)] = iplang[(ip, langs)]
 
     print("langloc ", len(dict))
     return dict
@@ -50,8 +52,9 @@ def get_langloc(iplang):
 def get_langdistribution(langloc, l):
     dict = {}
     loco = pickle.load(open("../databases/dict[locid]lat,lon", "rb"))
+    endefrit = ["en", "de", "fr", "it"]
     for (locid,langs) in langloc:
-        if l in langs and locid in loco:
+        if ((l == langs) or (l == "other" and l not in endefrit))  and locid in loco:
             co = loco[locid]
             if co in dict:
                 dict[co] += 1
@@ -63,24 +66,24 @@ def get_langdistribution(langloc, l):
 if __name__ == "__main__":
     # Read values from databases
     #iplang = get_iplang()
-    #pickle.dump(iplang, open("../databases/dict[(ip,langs)]count", "wb"))
-    #iplang = pickle.load(open("../databases/dict[(ip,langs)]count", "rb"))
+    #pickle.dump(iplang, open("../databases/dict[(ip,lang)]count", "wb"))
+    #iplang = pickle.load(open("../databases/dict[(ip,lang)]count", "rb"))
     #print("iplang saved")
     
     #langloc = get_langloc(iplang)
     #pickle.dump(langloc, open("../databases/dict[(locid,langs)]count", "wb"))
 
-    langloc = pickle.load(open("../databases/dict[(locid,langs)]count", "rb"))
+    langloc=pickle.load(open("../databases/dict[(locid,langs)]count", "rb"))
 
     #print("langloc saved")
 
-    dist = get_langdistribution(langloc, "en")
+    dist = get_langdistribution(langloc, "other")
     #print("dist done ", len(dist))
     
     # Make map
     width = 400000
     height = 300000
-    res = 'f'
+    res = 'l'
     proj = 'tmerc'
     lon = 8.25
     lat = 46.75
@@ -94,7 +97,7 @@ if __name__ == "__main__":
 
     print("map done")
 
-    min_marker_size = 1E-1
+    min_marker_size = 0.5
     
     for c in dist:
         x,y = ch_map(c[1], c[0])
@@ -102,5 +105,5 @@ if __name__ == "__main__":
         ch_map.plot(x, y, 'ro', markersize=msize)
 
         
-    plt.savefig('langenglish.png')
+    #plt.savefig('langother1.png')
     plt.show()

@@ -1,5 +1,7 @@
 import pymysql
 
+# too slow! better loccat3.py
+
 def connect():
     connection = pymysql.connect(host='localhost', user='nina',
                                  password='nina_secure', db='urltracker',

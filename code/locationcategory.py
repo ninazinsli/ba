@@ -1,5 +1,7 @@
 import pymysql
 
+# too slow
+
 def connect():
     connection = pymysql.connect(host='localhost', user='nina',
                                  password='nina_secure', db='urltracker',
