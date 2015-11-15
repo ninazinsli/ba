@@ -63,39 +63,76 @@ def find_false(mainlang):
                 dict[locid] = (mainlang[locid],  stat[codes[locid]])
     print("No preference: ", counter)
     return dict
+
+def all_in_one_dict():
+    loclang = pickle.load(open("../../databases/dict[(locid,lang)]count",
+                               "rb"))
+    stat = pickle.load(open("../../databases/stat[code]lang", "rb"))
+    codes = pickle.load(open("../../databases/dict[locid]code", "rb"))
     
+    it = defaultdict(int)
+    fr = defaultdict(int)
+    de = defaultdict(int)
+    
+    for (locid, lang) in loclang:
+        if lang == 'de':
+            de[locid] = loclang[(locid, lang)]
+        elif lang == 'it':
+            it[locid] = loclang[(locid, lang)]
+        elif lang == 'fr':
+            fr[locid] = loclang[(locid, lang)]
+
+    mainlang = defaultdict()
+    locids = pickle.load(open("../../databases/dict[locid]clicks", "rb"))
+
+    dict = defaultdict()
+    for locid in locids:
+        noit, nofr, node = it[locid], fr[locid], de[locid]
+        if locid in codes:
+            if codes[locid] in stat:
+                s = stat[codes[locid]]
+            else:
+                s = ''
+        else:
+            s = '' 
+        dict[locid] = (s, node, nofr, noit )
+
+    return dict
     
 if __name__ == "__main__":
 
-    main_lang = count_lang()
-    print("Locations: ", len(main_lang))
+    dict = all_in_one_dict()
+    pickle.dump(dict, open('dict','wb'))
 
-    wrong = find_false(main_lang)
-    print("Wrongly predicted: ", len(wrong))
+    # main_lang = count_lang()
+    # print("Locations: ", len(main_lang))
 
-    loccoord = pickle.load(open('../../databases/dict[locid]lat,lon', 'rb'))
+    # wrong = find_false(main_lang)
+    # print("Wrongly predicted: ", len(wrong))
+
+    # loccoord = pickle.load(open('../../databases/dict[locid]lat,lon', 'rb'))
     
-    wrongge = defaultdict()
-    wrongfr = defaultdict()
-    wrongit = defaultdict()
-    for locid in wrong:
-        false, right = wrong[locid]
-        if false == "de":
-            print("Predicted %s instead of %s in %s \n" %(false,right,locid))
-            if locid in loccoord:
-                wrongge[locid] = loccoord[locid]
-                lat,lon = tuple(loccoord[locid])
-                if float(lat) > 46.9167 and float(lon) > 7.4667:
-                    print("Predicted %s instead of %s in %s" %(false,right,locid))
-        if false == "fr":
-            if locid in loccoord:
-                wrongfr[locid] = loccoord[locid]
-        if false == "it":
-            if locid in loccoord:
-                wrongge[locid] = loccoord[locid]
+    # wrongge = defaultdict()
+    # wrongfr = defaultdict()
+    # wrongit = defaultdict()
+    # for locid in wrong:
+    #     false, right = wrong[locid]
+    #     if false == "de":
+    #         print("Predicted %s instead of %s in %s \n" %(false,right,locid))
+    #         if locid in loccoord:
+    #             wrongge[locid] = loccoord[locid]
+    #             lat,lon = tuple(loccoord[locid])
+    #             if float(lat) > 46.9167 and float(lon) > 7.4667:
+    #                 print("Predicted %s instead of %s in %s" %(false,right,locid))
+    #     if false == "fr":
+    #         if locid in loccoord:
+    #             wrongfr[locid] = loccoord[locid]
+    #     if false == "it":
+    #         if locid in loccoord:
+    #             wrongge[locid] = loccoord[locid]
                 
-    dict = wrongge
-    print("Total wrong: " , len(dict))
+    # dict = wrongge
+    # print("Total wrong: " , len(dict))
     
     # # Make map
     # width = 400000
